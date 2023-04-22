@@ -175,8 +175,8 @@ class ServiceRequestCard extends StatelessWidget {
                   Expanded(
                     child: LabelWithText(
                       crossAxisAlignment: CrossAxisAlignment.end,
-                      label: 'Floor',
-                      text: '5',
+                      label: 'Price',
+                      text: '₹500',
                     ),
                   ),
                 ],
