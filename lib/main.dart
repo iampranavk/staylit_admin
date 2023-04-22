@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:staylit_admin/screens/ui/home_screen.dart';
 import 'package:staylit_admin/screens/ui/login_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -29,20 +30,24 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Staylit Admin',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        backgroundColor: Colors.grey,
+      theme: ThemeData.light().copyWith(
         inputDecorationTheme: InputDecorationTheme(
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          filled: true,
           fillColor: Colors.blue[50],
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 15,
+          ),
+          iconColor: Colors.blueAccent,
+          prefixIconColor: Colors.blueAccent,
+          suffixIconColor: Colors.blueAccent,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(0),
-            borderSide: const BorderSide(color: Colors.blue, width: 0.5),
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none,
           ),
         ),
       ),
-      home: const LoginScreen(),
+      home: const HomeScreen(),
     );
   }
 }

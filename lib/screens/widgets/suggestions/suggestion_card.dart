@@ -50,7 +50,6 @@ class SuggestionCard extends StatelessWidget {
               Align(
                 alignment: Alignment.bottomRight,
                 child: CustomActionButton(
-                  mainAxisSize: MainAxisSize.min,
                   color: Colors.blue[800]!,
                   iconData: Icons.arrow_outward_outlined,
                   onPressed: () {

@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:staylit_admin/screens/widgets/add_floor_dialog.dart';
-import 'package:staylit_admin/screens/widgets/custom_action_button.dart';
+import 'package:staylit_admin/screens/widgets/add_edit_staff_dialog.dart';
+import 'package:staylit_admin/screens/widgets/add_edit_tenant_dialog.dart';
 import 'package:staylit_admin/screens/widgets/custom_button.dart';
 import 'package:staylit_admin/screens/widgets/custom_search.dart';
-import 'package:staylit_admin/screens/widgets/floor_card.dart';
+import 'package:staylit_admin/screens/widgets/tenant_card.dart';
+import 'package:staylit_admin/screens/widgets/user_card.dart';
 
-class FloorsScreen extends StatefulWidget {
-  const FloorsScreen({super.key});
+class TenantsScreen extends StatefulWidget {
+  const TenantsScreen({super.key});
 
   @override
-  State<FloorsScreen> createState() => _FloorsScreenState();
+  State<TenantsScreen> createState() => _TenantsScreenState();
 }
 
-class _FloorsScreenState extends State<FloorsScreen> {
+class _TenantsScreenState extends State<TenantsScreen> {
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -38,11 +39,11 @@ class _FloorsScreenState extends State<FloorsScreen> {
                 ),
                 Expanded(
                   child: CustomButton(
-                    label: 'Add Floor',
+                    label: 'Add Tenant',
                     onPressed: () {
                       showDialog(
                         context: context,
-                        builder: (context) => const AddFloorDialog(),
+                        builder: (context) => const AddEditTenantDialog(),
                       );
                     },
                   ),
@@ -59,9 +60,7 @@ class _FloorsScreenState extends State<FloorsScreen> {
                   runSpacing: 10,
                   children: List<Widget>.generate(
                     10,
-                    (index) => const FloorCard(
-                      label: '',
-                    ),
+                    (index) => const TenantCard(),
                   ),
                 ),
               ),

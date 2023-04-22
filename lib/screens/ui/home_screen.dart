@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:staylit_admin/screens/ui/home_screen_sections/complaints_screen.dart';
 import 'package:staylit_admin/screens/ui/home_screen_sections/dashboard_and_service_requests.dart';
 import 'package:staylit_admin/screens/ui/home_screen_sections/floors_screen.dart';
+import 'package:staylit_admin/screens/ui/home_screen_sections/notification_screen.dart';
 import 'package:staylit_admin/screens/ui/home_screen_sections/rooms_screen.dart';
 import 'package:staylit_admin/screens/ui/home_screen_sections/services_screen.dart';
 import 'package:staylit_admin/screens/ui/home_screen_sections/staffs_screen.dart';
 import 'package:staylit_admin/screens/ui/home_screen_sections/suggestion_screen.dart';
+import 'package:staylit_admin/screens/ui/home_screen_sections/tenants_screen.dart';
 import 'package:staylit_admin/screens/ui/login_screen.dart';
 import 'package:staylit_admin/screens/widgets/change_password_dialog.dart';
 import 'package:staylit_admin/screens/widgets/custom_alert_dialog.dart';
@@ -25,24 +27,24 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   void initState() {
-    Future.delayed(
-      const Duration(
-        milliseconds: 100,
-      ),
-      () {
-        if (Supabase.instance.client.auth.currentUser == null) {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) => const LoginScreen(),
-            ),
-            (route) => true,
-          );
-        }
-      },
-    );
+    // Future.delayed(
+    //   const Duration(
+    //     milliseconds: 100,
+    //   ),
+    //   () {
+    //     if (Supabase.instance.client.auth.currentUser == null) {
+    //       Navigator.of(context).pushAndRemoveUntil(
+    //         MaterialPageRoute(
+    //           builder: (context) => const LoginScreen(),
+    //         ),
+    //         (route) => true,
+    //       );
+    //     }
+    //   },
+    // );
 
     tabController = TabController(
-      length: 7,
+      length: 9,
       vsync: this,
     );
     super.initState();
@@ -54,13 +56,13 @@ class _HomeScreenState extends State<HomeScreen>
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,
-        iconTheme: IconThemeData(
-          color: Colors.blue[700]!,
+        iconTheme: const IconThemeData(
+          color: Colors.blueAccent,
         ),
         title: Text(
           'STAYLIT',
           style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                color: Colors.blue,
+                color: Colors.blueAccent,
                 fontWeight: FontWeight.bold,
               ),
         ),
@@ -74,9 +76,11 @@ class _HomeScreenState extends State<HomeScreen>
           FloorsScreen(),
           RoomsScreen(),
           ServicesScreen(),
+          TenantsScreen(),
           StaffsScreen(),
           ComplaintsScreen(),
           SuggestionsScreen(),
+          NotificationScreen(),
         ],
       ),
       drawer: Material(
@@ -150,7 +154,7 @@ class _HomeScreenState extends State<HomeScreen>
                   height: 15,
                 ),
                 CustomDrawerButton(
-                  label: "Staffs",
+                  label: "Tenants",
                   onPressed: () {
                     tabController.animateTo(4);
                     setState(() {});
@@ -162,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen>
                   height: 15,
                 ),
                 CustomDrawerButton(
-                  label: "Complaints",
+                  label: "Staffs",
                   onPressed: () {
                     tabController.animateTo(5);
                     setState(() {});
@@ -174,13 +178,37 @@ class _HomeScreenState extends State<HomeScreen>
                   height: 15,
                 ),
                 CustomDrawerButton(
-                  label: "Suggestions",
+                  label: "Complaints",
                   onPressed: () {
                     tabController.animateTo(6);
                     setState(() {});
                     Navigator.pop(context);
                   },
                   isSelected: tabController.index == 6,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                CustomDrawerButton(
+                  label: "Suggestions",
+                  onPressed: () {
+                    tabController.animateTo(7);
+                    setState(() {});
+                    Navigator.pop(context);
+                  },
+                  isSelected: tabController.index == 7,
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
+                CustomDrawerButton(
+                  label: "Notifications",
+                  onPressed: () {
+                    tabController.animateTo(8);
+                    setState(() {});
+                    Navigator.pop(context);
+                  },
+                  isSelected: tabController.index == 8,
                 ),
                 const SizedBox(
                   height: 15,

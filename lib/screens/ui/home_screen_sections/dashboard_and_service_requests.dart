@@ -2,6 +2,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:staylit_admin/screens/widgets/custom_card.dart';
 import 'package:staylit_admin/screens/widgets/custom_search.dart';
+import 'package:staylit_admin/screens/widgets/label_with_text.dart';
 
 class DashboardAndServiceRequestsScreen extends StatefulWidget {
   const DashboardAndServiceRequestsScreen({super.key});
@@ -19,7 +20,7 @@ class _DashboardAndServiceRequestsScreenState
       child: SizedBox(
         width: 1000,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(
               height: 20,
@@ -46,19 +47,21 @@ class _DashboardAndServiceRequestsScreenState
               ],
             ),
             const Divider(
-              height: 30,
-            ),
-            CustomSearch(
-              onSearch: (search) {},
-            ),
-            const SizedBox(
-              height: 10,
+              height: 40,
             ),
             Row(
               children: [
                 OrderItem(
                   isSeleted: true,
                   label: 'Pending',
+                  onTap: () {},
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                OrderItem(
+                  isSeleted: true,
+                  label: 'Active',
                   onTap: () {},
                 ),
                 const SizedBox(
@@ -74,7 +77,119 @@ class _DashboardAndServiceRequestsScreenState
             const Divider(
               height: 40,
             ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: List<Widget>.generate(
+                    10,
+                    (index) => const ServiceRequestCard(),
+                  ),
+                ),
+              ),
+            ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class ServiceRequestCard extends StatelessWidget {
+  const ServiceRequestCard({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 310,
+      child: CustomCard(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 15,
+            vertical: 10,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '#11',
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w400,
+                        ),
+                  ),
+                  Text(
+                    'Pending',
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w400,
+                        ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const LabelWithText(
+                label: 'Service',
+                text: 'Cleaning',
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Expanded(
+                    child: LabelWithText(
+                      label: 'From',
+                      text: 'User name',
+                    ),
+                  ),
+                  Expanded(
+                    child: LabelWithText(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      label: 'Accepted By',
+                      text: 'Staff name',
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(
+                height: 30,
+              ),
+              Row(
+                children: const [
+                  Expanded(
+                    child: LabelWithText(
+                      label: 'Room',
+                      text: '101',
+                    ),
+                  ),
+                  Expanded(
+                    child: LabelWithText(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      label: 'Floor',
+                      text: '5',
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(
+                height: 30,
+              ),
+              const LabelWithText(
+                label: 'Payment Status',
+                text: 'Pending',
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:staylit_admin/screens/widgets/custom_card.dart';
-import 'package:staylit_admin/values/colors.dart';
 
 class CustomSearch extends StatefulWidget {
   final Function(String?) onSearch;
@@ -41,11 +40,6 @@ class _CustomSearchState extends State<CustomSearch> {
               controller: _searchController,
               obscureText: false,
               decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                border: InputBorder.none,
                 hintText: widget.hintText ?? 'Search',
               ),
             ),
@@ -66,7 +60,7 @@ class _CustomSearchState extends State<CustomSearch> {
                   },
                   icon: const Icon(
                     Icons.search,
-                    color: primaryColor,
+                    color: Colors.blueAccent,
                   ),
                 )
               : const SizedBox(),

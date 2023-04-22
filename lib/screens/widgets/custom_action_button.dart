@@ -1,34 +1,32 @@
 import 'package:flutter/material.dart';
 
 class CustomActionButton extends StatelessWidget {
-  final IconData? iconData;
+  final IconData iconData;
   final String label;
   final Color color;
   final Function() onPressed;
   final bool isLoading;
-  final MainAxisSize mainAxisSize;
   const CustomActionButton({
     super.key,
-    this.iconData,
-    this.color = Colors.blue,
+    required this.iconData,
+    this.color = Colors.blueAccent,
     required this.onPressed,
     required this.label,
     this.isLoading = false,
-    this.mainAxisSize = MainAxisSize.max,
   });
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: color.withOpacity(.1),
-      borderRadius: BorderRadius.circular(0),
+      borderRadius: BorderRadius.circular(10),
       child: InkWell(
         onTap: onPressed,
         hoverColor: color.withOpacity(.15),
         focusColor: color.withOpacity(.15),
         highlightColor: color.withOpacity(.15),
         splashColor: color.withOpacity(.2),
-        borderRadius: BorderRadius.circular(0),
+        borderRadius: BorderRadius.circular(10),
         child: Padding(
           padding: const EdgeInsets.only(
             left: 10,
@@ -48,9 +46,14 @@ class CustomActionButton extends StatelessWidget {
                   ),
                 )
               : Row(
-                  mainAxisSize: mainAxisSize,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Icon(
+                      iconData,
+                      color: color,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 5),
                     Text(
                       label,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -58,14 +61,6 @@ class CustomActionButton extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                     ),
-                    SizedBox(width: iconData != null ? 5 : 0),
-                    iconData != null
-                        ? Icon(
-                            iconData,
-                            color: color,
-                            size: 16,
-                          )
-                        : const SizedBox(),
                   ],
                 ),
         ),

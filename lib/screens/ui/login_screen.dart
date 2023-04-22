@@ -156,10 +156,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                               CustomButton(
                                 labelColor: Colors.white,
-                                buttonColor: Colors.blue,
                                 label: 'Login',
                                 isLoading: state is SignInLoadingState,
-                                onTap: () {
+                                onPressed: () {
                                   if (_formKey.currentState!.validate()) {
                                     String email = _emailController.text.trim();
                                     String password =

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:staylit_admin/screens/widgets/custom_action_button.dart';
-import 'package:staylit_admin/values/colors.dart';
+
+import 'custom_button.dart';
 
 class CustomAlertDialog extends StatelessWidget {
   final String title, message;
@@ -27,7 +27,7 @@ class CustomAlertDialog extends StatelessWidget {
     return Dialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(0),
+        borderRadius: BorderRadius.circular(10),
       ),
       child: SizedBox(
         width: width,
@@ -86,8 +86,9 @@ class CustomAlertDialog extends StatelessWidget {
                     children: [
                       secondaryButtonLabel != null
                           ? Expanded(
-                              child: CustomActionButton(
-                                color: Colors.grey,
+                              child: CustomButton(
+                                color: Colors.blue[50],
+                                labelColor: Colors.blueAccent,
                                 label: secondaryButtonLabel ?? '',
                                 onPressed: secondaryOnPressed ??
                                     () {
@@ -103,9 +104,9 @@ class CustomAlertDialog extends StatelessWidget {
                               : 0),
                       primaryButtonLabel != null
                           ? Expanded(
-                              child: CustomActionButton(
+                              child: CustomButton(
                                 label: primaryButtonLabel ?? '',
-                                color: primaryColor,
+                                labelColor: Colors.white,
                                 onPressed: primaryOnPressed ??
                                     () {
                                       Navigator.pop(context);
