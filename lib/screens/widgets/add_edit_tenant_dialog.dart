@@ -241,6 +241,7 @@ class _AddEditTenantDialogState extends State<AddEditTenantDialog> {
                             password: _passwordController.text.trim().isNotEmpty
                                 ? _passwordController.text.trim()
                                 : null,
+                            roomId: roomId,
                           ),
                         );
 

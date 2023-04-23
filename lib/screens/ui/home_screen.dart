@@ -44,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen>
     // );
 
     tabController = TabController(
-      length: 9,
+      length: 8,
       vsync: this,
     );
     super.initState();
@@ -80,7 +80,6 @@ class _HomeScreenState extends State<HomeScreen>
           StaffsScreen(),
           ComplaintsScreen(),
           SuggestionsScreen(),
-          NotificationScreen(),
         ],
       ),
       drawer: Material(
@@ -197,18 +196,6 @@ class _HomeScreenState extends State<HomeScreen>
                     Navigator.pop(context);
                   },
                   isSelected: tabController.index == 7,
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                CustomDrawerButton(
-                  label: "Notifications",
-                  onPressed: () {
-                    tabController.animateTo(8);
-                    setState(() {});
-                    Navigator.pop(context);
-                  },
-                  isSelected: tabController.index == 8,
                 ),
                 const SizedBox(
                   height: 15,

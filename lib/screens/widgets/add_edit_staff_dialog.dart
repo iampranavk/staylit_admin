@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:staylit_admin/blocs/staff/staff_bloc.dart';
 import 'package:staylit_admin/screens/widgets/custom_button.dart';
 import 'package:staylit_admin/screens/widgets/custom_card.dart';
 
 class AddEditStaffDialog extends StatefulWidget {
   final Map<String, dynamic>? staffDetails;
+  final StaffBloc staffBloc;
   const AddEditStaffDialog({
     super.key,
     this.staffDetails,
+    required this.staffBloc,
   });
 
   @override
@@ -28,7 +31,7 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
     if (widget.staffDetails != null) {
       _nameController.text = widget.staffDetails!['name'];
       _emailController.text = widget.staffDetails!['email'];
-      _phoneNumberController.text = widget.staffDetails!['phone_number'];
+      _phoneNumberController.text = widget.staffDetails!['phone'];
     }
     super.initState();
   }
@@ -232,29 +235,30 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       if (widget.staffDetails != null) {
-                        // BlocProvider.of<DeskBloc>(context).add(
-                        //   EditDeskEvent(
-                        //     userId: widget.staffDetails!['user_id'],
-                        //     name: _nameController.text.trim(),
-                        //     phone: _phoneNumberController.text.trim(),
-                        //     email: _emailController.text.trim(),
-                        //     password: _passwordController.text.trim().isNotEmpty
-                        //         ? _passwordController.text.trim()
-                        //         : null,
-                        //   ),
-                        // );
-                      } else {
-                        // BlocProvider.of<DeskBloc>(context).add(
-                        //   AddDeskEvent(
-                        //     name: _nameController.text.trim(),
-                        //     phone: _phoneNumberController.text.trim(),
-                        //     email: _emailController.text.trim(),
-                        //     password: _passwordController.text.trim(),
-                        //   ),
-                        // );
-                      }
+                        widget.staffBloc.add(
+                          EditStaffEvent(
+                            userId: widget.staffDetails!['user_id'],
+                            name: _nameController.text.trim(),
+                            phone: _phoneNumberController.text.trim(),
+                            email: _emailController.text.trim(),
+                            password: _passwordController.text.trim().isNotEmpty
+                                ? _passwordController.text.trim()
+                                : null,
+                          ),
+                        );
 
-                      Navigator.pop(context);
+                        Navigator.pop(context);
+                      } else {
+                        widget.staffBloc.add(
+                          AddStaffEvent(
+                              name: _nameController.text.trim(),
+                              phone: _phoneNumberController.text.trim(),
+                              email: _emailController.text.trim(),
+                              password: _passwordController.text.trim()),
+                        );
+
+                        Navigator.pop(context);
+                      }
                     }
                   },
                 ),

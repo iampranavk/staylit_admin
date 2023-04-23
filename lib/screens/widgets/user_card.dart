@@ -5,6 +5,7 @@ import 'package:staylit_admin/screens/widgets/label_with_text.dart';
 
 class UserCard extends StatelessWidget {
   final bool showButtons;
+
   const UserCard({
     super.key,
     this.showButtons = false,
