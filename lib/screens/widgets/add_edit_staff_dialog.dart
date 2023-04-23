@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:staylit_admin/blocs/staff/staff_bloc.dart';
 import 'package:staylit_admin/screens/widgets/custom_button.dart';
 import 'package:staylit_admin/screens/widgets/custom_card.dart';
+import 'package:staylit_admin/util/value_validators.dart';
 
 class AddEditStaffDialog extends StatefulWidget {
   final Map<String, dynamic>? staffDetails;
@@ -119,13 +119,7 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
                 CustomCard(
                   child: TextFormField(
                     controller: _nameController,
-                    validator: (value) {
-                      if (value != null && value.trim().isNotEmpty) {
-                        return null;
-                      } else {
-                        return 'Please enter Name';
-                      }
-                    },
+                    validator: alphaNumericValidator,
                     decoration: const InputDecoration(
                       hintText: 'eg. Mr.John',
                     ),
@@ -146,13 +140,7 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
                 CustomCard(
                   child: TextFormField(
                     controller: _emailController,
-                    validator: (value) {
-                      if (value != null && value.trim().isNotEmpty) {
-                        return null;
-                      } else {
-                        return 'Please enter Email';
-                      }
-                    },
+                    validator: emailValidator,
                     decoration: const InputDecoration(
                       hintText: 'eg.staff@staylit.com',
                     ),
@@ -163,7 +151,7 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
                   color: Color.fromARGB(66, 176, 176, 176),
                 ),
                 Text(
-                  'Passward',
+                  'Password',
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
                         color: Colors.black45,
                         fontWeight: FontWeight.bold,
@@ -174,14 +162,9 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
                   child: TextFormField(
                     obscureText: _isObscure,
                     controller: _passwordController,
-                    validator: (value) {
-                      if ((value != null && value.trim().isNotEmpty) ||
-                          widget.staffDetails != null) {
-                        return null;
-                      } else {
-                        return 'Please enter passsword';
-                      }
-                    },
+                    validator: widget.staffDetails != null
+                        ? (value) => null
+                        : passwordValidator,
                     decoration: InputDecoration(
                       suffixIcon: IconButton(
                         onPressed: () {
@@ -213,13 +196,7 @@ class _AddEditStaffDialogState extends State<AddEditStaffDialog> {
                 CustomCard(
                   child: TextFormField(
                     controller: _phoneNumberController,
-                    validator: (value) {
-                      if (value != null && value.trim().isNotEmpty) {
-                        return null;
-                      } else {
-                        return 'Please enter Phone';
-                      }
-                    },
+                    validator: phoneValidator,
                     decoration: const InputDecoration(
                       hintText: 'eg. 9876543210',
                     ),
