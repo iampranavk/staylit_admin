@@ -117,9 +117,6 @@ class _FloorsScreenState extends State<FloorsScreen> {
                   const SizedBox(
                     height: 40,
                   ),
-                  const SizedBox(
-                    height: 40,
-                  ),
                 ],
               ),
             ),

@@ -1,16 +1,20 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:staylit_admin/blocs/service/service_bloc.dart';
 import 'package:staylit_admin/screens/widgets/custom_action_button.dart';
 import 'package:staylit_admin/screens/widgets/custom_alert_dialog.dart';
 import 'package:staylit_admin/screens/widgets/custom_button.dart';
 import 'package:staylit_admin/screens/widgets/custom_card.dart';
 import 'package:staylit_admin/util/custom_file_picker.dart';
+import 'package:staylit_admin/util/value_validators.dart';
 
 class AddEditServiceDialog extends StatefulWidget {
   final Map<String, dynamic>? serviceDetails;
+  final ServiceBloc serviceBloc;
   const AddEditServiceDialog({
     super.key,
     this.serviceDetails,
+    required this.serviceBloc,
   });
 
   @override
@@ -57,13 +61,7 @@ class _AddEditServiceDialogState extends State<AddEditServiceDialog> {
             CustomCard(
               child: TextFormField(
                 controller: _nameController,
-                validator: (value) {
-                  if (value != null && value.trim().isNotEmpty) {
-                    return null;
-                  } else {
-                    return 'Please enter service name';
-                  }
-                },
+                validator: alphaNumericValidator,
                 decoration: const InputDecoration(
                   hintText: 'eg.Cleaning',
                 ),
@@ -83,13 +81,7 @@ class _AddEditServiceDialogState extends State<AddEditServiceDialog> {
             CustomCard(
               child: TextFormField(
                 controller: _priceController,
-                validator: (value) {
-                  if (value != null && value.trim().isNotEmpty) {
-                    return null;
-                  } else {
-                    return 'Please enter a price';
-                  }
-                },
+                validator: numericValidator,
                 decoration: const InputDecoration(
                   hintText: 'Price in rupees',
                 ),
@@ -124,33 +116,21 @@ class _AddEditServiceDialogState extends State<AddEditServiceDialog> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   if (widget.serviceDetails != null) {
-                    // BlocProvider.of<PatientBloc>(context).add(
-                    //   EditPatientEvent(
-                    //     patientId: widget.patientDetails!['id'],
-                    //     name: _nameController.text.trim(),
-                    //     phone: _phoneNumberController.text.trim(),
-                    //     address: _addressController.text.trim(),
-                    //     city: _cityController.text.trim(),
-                    //     district: _districtController.text.trim(),
-                    //     dob: _dob!,
-                    //     gender: _gender,
-                    //     state: _stateController.text.trim(),
-                    //   ),
-                    // );
+                    widget.serviceBloc.add(EditServiceEvent(
+                      name: _nameController.text.trim(),
+                      price: int.parse(_priceController.text.trim().toString()),
+                      serviceId: widget.serviceDetails!['id'],
+                      file: selectedFile,
+                    ));
+                    Navigator.pop(context);
                   } else {
                     if (selectedFile != null) {
-                      // BlocProvider.of<PatientBloc>(context).add(
-                      //   AddPatientEvent(
-                      //     name: _nameController.text.trim(),
-                      //     phone: _phoneNumberController.text.trim(),
-                      //     address: _addressController.text.trim(),
-                      //     city: _cityController.text.trim(),
-                      //     district: _districtController.text.trim(),
-                      //     dob: _dob!,
-                      //     gender: _gender,
-                      //     state: _stateController.text.trim(),
-                      //   ),
-                      // );
+                      widget.serviceBloc.add(AddServiceEvent(
+                        name: _nameController.text.trim(),
+                        price:
+                            int.parse(_priceController.text.trim().toString()),
+                        file: selectedFile!,
+                      ));
                       Navigator.pop(context);
                     } else {
                       showDialog(

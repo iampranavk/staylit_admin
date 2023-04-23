@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:staylit_admin/blocs/service/service_bloc.dart';
 import 'package:staylit_admin/screens/widgets/add_edit_service_dialog.dart';
 import 'package:staylit_admin/screens/widgets/custom_action_button.dart';
+import 'package:staylit_admin/screens/widgets/custom_alert_dialog.dart';
 import 'package:staylit_admin/screens/widgets/custom_button.dart';
 import 'package:staylit_admin/screens/widgets/custom_card.dart';
+import 'package:staylit_admin/screens/widgets/custom_progress_indicator.dart';
 import 'package:staylit_admin/screens/widgets/custom_search.dart';
 import 'package:staylit_admin/screens/widgets/label_with_text.dart';
 
@@ -14,66 +18,126 @@ class ServicesScreen extends StatefulWidget {
 }
 
 class _ServicesScreenState extends State<ServicesScreen> {
+  ServiceBloc serviceBloc = ServiceBloc();
+
+  String? query;
+
+  void getServices() {
+    serviceBloc.add(GetAllServiceEvent(
+      query: query,
+    ));
+  }
+
+  @override
+  void initState() {
+    getServices();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        width: 1000,
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  flex: 4,
-                  child: CustomSearch(
-                    onSearch: (search) {},
+    return BlocProvider<ServiceBloc>.value(
+      value: serviceBloc,
+      child: BlocConsumer<ServiceBloc, ServiceState>(
+        listener: (context, state) {
+          if (state is ServiceFailureState) {
+            showDialog(
+              context: context,
+              builder: (context) => CustomAlertDialog(
+                title: 'Failed',
+                message: state.message,
+                primaryButtonLabel: 'Ok',
+                primaryOnPressed: () {
+                  getServices();
+                },
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          return Center(
+            child: SizedBox(
+              width: 1000,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 20,
                   ),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                Expanded(
-                  child: CustomButton(
-                    label: 'Add Service',
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => const AddEditServiceDialog(),
-                      );
-                    },
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: CustomSearch(
+                          onSearch: (search) {
+                            query = search;
+                            getServices();
+                          },
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: CustomButton(
+                          label: 'Add Service',
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AddEditServiceDialog(
+                                serviceBloc: serviceBloc,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-            const Divider(
-              height: 40,
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: List<Widget>.generate(
-                    10,
-                    (index) => const ServiceCard(),
+                  const Divider(
+                    height: 40,
                   ),
-                ),
+                  Expanded(
+                    child: state is ServiceSuccessState
+                        ? state.services.isNotEmpty
+                            ? SingleChildScrollView(
+                                child: Wrap(
+                                  spacing: 20,
+                                  runSpacing: 20,
+                                  children: List<Widget>.generate(
+                                    state.services.length,
+                                    (index) => ServiceCard(
+                                      serviceBloc: serviceBloc,
+                                      serviceDetails: state.services[index],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : const Center(child: Text('No services found.'))
+                        : const Center(
+                            child: CustomProgressIndicator(),
+                          ),
+                  ),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 }
 
 class ServiceCard extends StatelessWidget {
+  final Map<String, dynamic> serviceDetails;
+  final ServiceBloc serviceBloc;
   const ServiceCard({
     super.key,
+    required this.serviceDetails,
+    required this.serviceBloc,
   });
 
   @override
@@ -90,7 +154,7 @@ class ServiceCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '#11',
+                '#${serviceDetails['id'].toString()}',
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                       color: Colors.grey[600],
                       fontWeight: FontWeight.w400,
@@ -104,7 +168,7 @@ class ServiceCard extends StatelessWidget {
                 child: AspectRatio(
                   aspectRatio: 1 / 1,
                   child: Image.network(
-                    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
+                    serviceDetails['image_url'],
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -112,15 +176,15 @@ class ServiceCard extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              const LabelWithText(
+              LabelWithText(
                 label: 'Service',
-                text: 'Cleaning',
+                text: serviceDetails['service'],
               ),
               const SizedBox(
                 height: 10,
               ),
               Text(
-                '₹500',
+                '₹${serviceDetails['price'].toString()}',
                 style: Theme.of(context).textTheme.titleMedium!.copyWith(
                       color: Colors.black,
                       fontWeight: FontWeight.w500,
@@ -137,7 +201,10 @@ class ServiceCard extends StatelessWidget {
                       iconData: Icons.delete_forever_outlined,
                       label: 'Delete',
                       color: Colors.red[700]!,
-                      onPressed: () {},
+                      onPressed: () {
+                        serviceBloc
+                            .add(DeleteServiceEvent(id: serviceDetails['id']));
+                      },
                     ),
                   ),
                   const SizedBox(
@@ -148,7 +215,15 @@ class ServiceCard extends StatelessWidget {
                       iconData: Icons.edit_outlined,
                       label: 'Update',
                       color: Colors.orange[700]!,
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => AddEditServiceDialog(
+                            serviceBloc: serviceBloc,
+                            serviceDetails: serviceDetails,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],

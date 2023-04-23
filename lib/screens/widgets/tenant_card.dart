@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:staylit_admin/blocs/tenant/tenant_bloc.dart';
+import 'package:staylit_admin/screens/widgets/add_edit_tenant_dialog.dart';
 import 'package:staylit_admin/screens/widgets/custom_action_button.dart';
 import 'package:staylit_admin/screens/widgets/custom_card.dart';
 import 'package:staylit_admin/screens/widgets/label_with_text.dart';
 
 class TenantCard extends StatelessWidget {
+  final Map<String, dynamic> tenantDetails;
+  final TenantBloc tenantBloc;
   const TenantCard({
     super.key,
+    required this.tenantDetails,
+    required this.tenantBloc,
   });
 
   @override
@@ -20,7 +26,7 @@ class TenantCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '#12',
+                '#${tenantDetails['id'].toString()}',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       color: Colors.black,
                     ),
@@ -29,18 +35,18 @@ class TenantCard extends StatelessWidget {
                 height: 10,
               ),
               Row(
-                children: const [
+                children: [
                   Expanded(
                     child: LabelWithText(
                       label: 'Name',
-                      text: 'John',
+                      text: tenantDetails['name'],
                     ),
                   ),
                   Expanded(
                     child: LabelWithText(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       label: 'Email',
-                      text: 'john@email.com',
+                      text: tenantDetails['email'],
                     ),
                   ),
                 ],
@@ -48,28 +54,28 @@ class TenantCard extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              const LabelWithText(
+              LabelWithText(
                 label: 'Phone',
-                text: '9876543210',
+                text: tenantDetails['phone'],
               ),
               const Divider(
                 height: 30,
               ),
               Row(
-                children: const [
+                children: [
                   Expanded(
                     child: LabelWithText(
                       label: 'Room',
-                      text: '101',
+                      text: tenantDetails['room']['room_no'],
                     ),
                   ),
-                  Expanded(
-                    child: LabelWithText(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      label: 'Floor',
-                      text: '5',
-                    ),
-                  ),
+                  // Expanded(
+                  //   child: LabelWithText(
+                  //     crossAxisAlignment: CrossAxisAlignment.end,
+                  //     label: 'Floor',
+                  //     text: '5',
+                  //   ),
+                  // ),
                 ],
               ),
               const Divider(
@@ -85,7 +91,13 @@ class TenantCard extends StatelessWidget {
                           iconData: Icons.delete_forever_outlined,
                           label: 'Delete',
                           color: Colors.red[700]!,
-                          onPressed: () {},
+                          onPressed: () {
+                            tenantBloc.add(
+                              DeleteTenantEvent(
+                                userId: tenantDetails['user_id'],
+                              ),
+                            );
+                          },
                         ),
                       ),
                       const SizedBox(
@@ -96,7 +108,15 @@ class TenantCard extends StatelessWidget {
                           iconData: Icons.edit_outlined,
                           label: 'Update',
                           color: Colors.blue[700]!,
-                          onPressed: () {},
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => AddEditTenantDialog(
+                                tenantBloc: tenantBloc,
+                                tenantDetails: tenantDetails,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ],
@@ -106,9 +126,22 @@ class TenantCard extends StatelessWidget {
                   ),
                   CustomActionButton(
                     iconData: Icons.block_outlined,
-                    label: 'Block',
-                    color: Colors.amber[700]!,
-                    onPressed: () {},
+                    label: tenantDetails['status'] == 'active'
+                        ? 'Block'
+                        : 'Active',
+                    color: tenantDetails['status'] == 'active'
+                        ? Colors.red
+                        : Colors.green,
+                    onPressed: () {
+                      tenantBloc.add(
+                        ChangeStatusTenantEvent(
+                          userId: tenantDetails['user_id'],
+                          status: tenantDetails['status'] == 'active'
+                              ? 'blocked'
+                              : 'active',
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
