@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:staylit_admin/blocs/floor/floor_bloc.dart';
 import 'package:staylit_admin/screens/widgets/custom_alert_dialog.dart';
 import 'package:staylit_admin/screens/widgets/custom_card.dart';
+import 'package:staylit_admin/util/value_validators.dart';
 
 class AddFloorDialog extends StatefulWidget {
-  const AddFloorDialog({super.key});
+  final FloorBloc floorBloc;
+  const AddFloorDialog({super.key, required this.floorBloc});
 
   @override
   State<AddFloorDialog> createState() => _AddFloorDialogState();
@@ -35,13 +38,7 @@ class _AddFloorDialogState extends State<AddFloorDialog> {
             CustomCard(
               child: TextFormField(
                 controller: _nameController,
-                validator: (value) {
-                  if (value != null && value.trim().isNotEmpty) {
-                    return null;
-                  } else {
-                    return 'Please enter floor name';
-                  }
-                },
+                validator: alphaNumericValidator,
                 decoration: const InputDecoration(
                   hintText: 'eg.Floor 1',
                 ),
@@ -52,7 +49,15 @@ class _AddFloorDialogState extends State<AddFloorDialog> {
       ),
       primaryButtonLabel: 'Add',
       primaryOnPressed: () {
-        if (_formKey.currentState!.validate()) {}
+        if (_formKey.currentState!.validate()) {
+          widget.floorBloc.add(
+            AddFloorEvent(
+              name: _nameController.text.trim(),
+            ),
+          );
+
+          Navigator.pop(context);
+        }
       },
     );
   }

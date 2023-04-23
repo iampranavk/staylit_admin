@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:staylit_admin/blocs/room/room_bloc.dart';
 import 'package:staylit_admin/screens/widgets/custom_alert_dialog.dart';
 import 'package:staylit_admin/screens/widgets/custom_card.dart';
+import 'package:staylit_admin/screens/widgets/floor_selector.dart';
+import 'package:staylit_admin/util/value_validators.dart';
 
 class AddRoomDialog extends StatefulWidget {
-  const AddRoomDialog({super.key});
+  final RoomBloc roomBloc;
+  const AddRoomDialog({super.key, required this.roomBloc});
 
   @override
   State<AddRoomDialog> createState() => _AddRoomDialogState();
@@ -12,6 +16,7 @@ class AddRoomDialog extends StatefulWidget {
 class _AddRoomDialogState extends State<AddRoomDialog> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
+  int? floorId;
   @override
   Widget build(BuildContext context) {
     return CustomAlertDialog(
@@ -35,24 +40,45 @@ class _AddRoomDialogState extends State<AddRoomDialog> {
             CustomCard(
               child: TextFormField(
                 controller: _nameController,
-                validator: (value) {
-                  if (value != null && value.trim().isNotEmpty) {
-                    return null;
-                  } else {
-                    return 'Please enter room name';
-                  }
-                },
+                validator: alphaNumericValidator,
                 decoration: const InputDecoration(
                   hintText: 'eg.Room 11',
                 ),
               ),
+            ),
+            const SizedBox(height: 10),
+            FloorSelector(
+              onSelect: (id) {
+                floorId = id;
+                setState(() {});
+              },
+              label: 'Select Floor',
             ),
           ],
         ),
       ),
       primaryButtonLabel: 'Add',
       primaryOnPressed: () {
-        if (_formKey.currentState!.validate()) {}
+        if (_formKey.currentState!.validate()) {
+          if (floorId != null) {
+            widget.roomBloc.add(
+              AddRoomEvent(
+                name: _nameController.text.trim(),
+                floorId: floorId!,
+              ),
+            );
+            Navigator.pop(context);
+          } else {
+            showDialog(
+              context: context,
+              builder: (_) => const CustomAlertDialog(
+                title: 'Required',
+                message: 'Floor is required',
+                primaryButtonLabel: 'Ok',
+              ),
+            );
+          }
+        }
       },
     );
   }
