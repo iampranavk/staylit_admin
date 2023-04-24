@@ -5,6 +5,7 @@ import 'package:staylit_admin/screens/ui/home_screen.dart';
 import 'package:staylit_admin/screens/widgets/custom_button.dart';
 import 'package:staylit_admin/screens/widgets/custom_card.dart';
 import 'package:staylit_admin/screens/widgets/custom_input_form_field.dart';
+import 'package:staylit_admin/util/value_validators.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -113,14 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 controller: _emailController,
                                 prefixIcon: Icons.email,
                                 labelText: 'Email',
-                                validator: (value) {
-                                  if (value != null &&
-                                      value.trim().isNotEmpty) {
-                                    return null;
-                                  } else {
-                                    return "Please enter an email";
-                                  }
-                                },
+                                validator: emailValidator,
                               ),
                               const SizedBox(
                                 height: 10,

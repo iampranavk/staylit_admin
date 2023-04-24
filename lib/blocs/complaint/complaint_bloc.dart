@@ -32,6 +32,22 @@ class ComplaintBloc extends Bloc<ComplaintEvent, ComplaintState> {
                   .eq('id', complaints[i]['service_request_id'])
                   .single();
 
+              Map<String, dynamic>? reportedByStaff = await staffTable
+                  .select()
+                  .eq('user_id', complaints[i]['user_id'])
+                  .maybeSingle();
+
+              Map<String, dynamic>? reportedByTenant = await userTable
+                  .select()
+                  .eq('user_id', complaints[i]['user_id'])
+                  .maybeSingle();
+
+              if (reportedByStaff != null) {
+                complaints[i]['reportedBy'] = reportedByStaff;
+              } else if (reportedByTenant != null) {
+                complaints[i]['reportedBy'] = reportedByTenant;
+              }
+
               complaints[i]['request'] = requests;
 
               Map<String, dynamic> service = await servicesTable

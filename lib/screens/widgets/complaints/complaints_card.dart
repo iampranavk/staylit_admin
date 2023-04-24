@@ -58,6 +58,38 @@ class ComplaintCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
+                          'Reported User Details',
+                          style:
+                              Theme.of(context).textTheme.labelLarge!.copyWith(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: LabelWithText(
+                                label: 'Name',
+                                text: complaintDetails['reportedBy']['name'],
+                              ),
+                            ),
+                            Expanded(
+                              child: LabelWithText(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                label: 'Phone Number',
+                                text: complaintDetails['reportedBy']['phone'],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Divider(
+                          height: 20,
+                        ),
+                        Text(
                           'Service Request Details',
                           style:
                               Theme.of(context).textTheme.labelLarge!.copyWith(
@@ -66,7 +98,7 @@ class ComplaintCard extends StatelessWidget {
                                   ),
                         ),
                         const SizedBox(
-                          height: 20,
+                          height: 5,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -138,8 +170,15 @@ class ComplaintCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const Divider(
-                          height: 30,
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        LabelWithText(
+                          label: 'Requested By',
+                          text: complaintDetails['requestedBy']['name'],
+                        ),
+                        const SizedBox(
+                          height: 10,
                         ),
                         Row(
                           children: [
@@ -159,8 +198,8 @@ class ComplaintCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const Divider(
-                          height: 30,
+                        const SizedBox(
+                          height: 10,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
