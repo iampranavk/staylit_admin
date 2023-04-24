@@ -37,12 +37,15 @@ class TenantBloc extends Bloc<TenantEvent, TenantState> {
           }).toList();
 
           for (int i = 0; i < profiles.length; i++) {
-            Map<String, dynamic> room = await roomTable
+            Map<String, dynamic>? room = await roomTable
                 .select()
                 .eq('occuppied_by', profiles[i]['user_id'])
                 .single();
-
-            profiles[i]['room'] = room;
+            if (room != null) {
+              profiles[i]['room'] = room;
+            } else {
+              profiles[i]['room'] = null;
+            }
           }
 
           emit(TenantSuccessState(tenants: profiles));

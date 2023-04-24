@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:staylit_admin/blocs/tenant/tenant_bloc.dart';
+import 'package:staylit_admin/screens/widgets/custom_alert_dialog.dart';
 import 'package:staylit_admin/screens/widgets/custom_button.dart';
 import 'package:staylit_admin/screens/widgets/custom_card.dart';
 import 'package:staylit_admin/screens/widgets/room_selector.dart';
@@ -247,16 +248,28 @@ class _AddEditTenantDialogState extends State<AddEditTenantDialog> {
 
                         Navigator.pop(context);
                       } else {
-                        widget.tenantBloc.add(
-                          AddTenantEvent(
-                            name: _nameController.text.trim(),
-                            phone: _phoneNumberController.text.trim(),
-                            email: _emailController.text.trim(),
-                            password: _passwordController.text.trim(),
-                            roomId: roomId!,
-                          ),
-                        );
-                        Navigator.pop(context);
+                        if (roomId != null) {
+                          widget.tenantBloc.add(
+                            AddTenantEvent(
+                              name: _nameController.text.trim(),
+                              phone: _phoneNumberController.text.trim(),
+                              email: _emailController.text.trim(),
+                              password: _passwordController.text.trim(),
+                              roomId: roomId!,
+                            ),
+                          );
+                          Navigator.pop(context);
+                        } else {
+                          showDialog(
+                            context: context,
+                            builder: (_) => const CustomAlertDialog(
+                              title: 'Required !',
+                              message:
+                                  'Room number is required. Please select a room to continue',
+                              primaryButtonLabel: 'Ok',
+                            ),
+                          );
+                        }
                       }
                     }
                   },

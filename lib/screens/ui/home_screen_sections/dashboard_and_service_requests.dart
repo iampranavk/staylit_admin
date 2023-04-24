@@ -210,7 +210,8 @@ class _DashboardAndServiceRequestsScreenState
                                   ),
                                 ),
                               )
-                            : const Center(child: Text('No service found.'))
+                            : const Center(
+                                child: Text('No service requests found.'))
                         : const Center(
                             child: CustomProgressIndicator(),
                           ),
