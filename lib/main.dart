@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:staylit_admin/screens/ui/home_screen.dart';
 import 'package:staylit_admin/screens/ui/login_screen.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -47,7 +46,7 @@ class MyApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const HomeScreen(),
+      home: const LoginScreen(),
     );
   }
 }

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:staylit_admin/blocs/complaint/complaint_bloc.dart';
-import 'package:staylit_admin/blocs/suggestion/suggestion_bloc.dart';
 import 'package:staylit_admin/screens/widgets/complaints/complaints_card.dart';
 import 'package:staylit_admin/screens/widgets/custom_alert_dialog.dart';
 import 'package:staylit_admin/screens/widgets/custom_progress_indicator.dart';
-import 'package:staylit_admin/screens/widgets/suggestions/suggestion_card.dart';
 
 class ComplaintsScreen extends StatefulWidget {
   const ComplaintsScreen({super.key});
@@ -62,7 +60,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
                                   children: List<Widget>.generate(
                                     state.complaints.length,
                                     (index) => ComplaintCard(
-                                      complaints: state.complaints[index],
+                                      complaintDetails: state.complaints[index],
                                     ),
                                   ),
                                 ),

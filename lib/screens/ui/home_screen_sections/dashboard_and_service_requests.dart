@@ -1,8 +1,12 @@
-import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:staylit_admin/blocs/dashboard_count/dashboard_count_bloc.dart';
+import 'package:staylit_admin/blocs/service_request/service_request_bloc.dart';
+import 'package:staylit_admin/screens/widgets/custom_alert_dialog.dart';
 import 'package:staylit_admin/screens/widgets/custom_card.dart';
-import 'package:staylit_admin/screens/widgets/custom_search.dart';
+import 'package:staylit_admin/screens/widgets/custom_progress_indicator.dart';
 import 'package:staylit_admin/screens/widgets/label_with_text.dart';
+import 'package:staylit_admin/screens/widgets/service_selector.dart';
 
 class DashboardAndServiceRequestsScreen extends StatefulWidget {
   const DashboardAndServiceRequestsScreen({super.key});
@@ -14,97 +18,227 @@ class DashboardAndServiceRequestsScreen extends StatefulWidget {
 
 class _DashboardAndServiceRequestsScreenState
     extends State<DashboardAndServiceRequestsScreen> {
+  String status = 'pending';
+
+  ServiceRequestBloc serviceRequestBloc = ServiceRequestBloc();
+
+  DashboardCountBloc dashboardCountBloc = DashboardCountBloc();
+
+  int? serviceId;
+
+  void getServiceRequest() {
+    serviceRequestBloc.add(
+      GetAllServiceRequestsEvent(
+        serviceId: serviceId,
+        status: status,
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    getServiceRequest();
+    dashboardCountBloc.add(DashboardCountEvent());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        width: 1000,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 20,
-            ),
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: const [
-                DashboardCard(
-                  label: 'Today\'s Requests',
-                  title: '20',
-                  icon: Icons.description_outlined,
-                ),
-                DashboardCard(
-                  label: 'Total Staffs',
-                  title: '100',
-                  icon: Icons.people_alt_outlined,
-                ),
-                DashboardCard(
-                  label: 'Total Services',
-                  title: '30',
-                  icon: Icons.info_outline,
-                ),
-              ],
-            ),
-            const Divider(
-              height: 40,
-            ),
-            Row(
-              children: [
-                OrderItem(
-                  isSeleted: true,
-                  label: 'Pending',
-                  onTap: () {},
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                OrderItem(
-                  isSeleted: true,
-                  label: 'Active',
-                  onTap: () {},
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                OrderItem(
-                  isSeleted: false,
-                  label: 'Completed',
-                  onTap: () {},
-                ),
-              ],
-            ),
-            const Divider(
-              height: 40,
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: List<Widget>.generate(
-                    10,
-                    (index) => const ServiceRequestCard(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ServiceRequestBloc>.value(
+          value: serviceRequestBloc,
+        ),
+        BlocProvider<DashboardCountBloc>.value(
+          value: dashboardCountBloc,
+        ),
+      ],
+      child: BlocConsumer<ServiceRequestBloc, ServiceRequestState>(
+        listener: (context, state) {
+          if (state is ServiceRequestFailureState) {
+            showDialog(
+              context: context,
+              builder: (context) => CustomAlertDialog(
+                title: 'Failed',
+                message: state.message,
+                primaryButtonLabel: 'Ok',
+                primaryOnPressed: () {
+                  getServiceRequest();
+                },
+              ),
+            );
+          }
+        },
+        builder: (context, state) {
+          return Center(
+            child: SizedBox(
+              width: 1000,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(
+                    height: 20,
                   ),
-                ),
+                  BlocConsumer<DashboardCountBloc, DashboardCountState>(
+                    listener: (context, state) {
+                      if (state is DashboardCountFailureState) {
+                        showDialog(
+                          context: context,
+                          builder: (context) => CustomAlertDialog(
+                            title: 'Failed',
+                            message: state.message,
+                            primaryButtonLabel: 'Ok',
+                            primaryOnPressed: () {
+                              getServiceRequest();
+                            },
+                          ),
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      return state is DashboardCountSuccessState
+                          ? Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              children: [
+                                DashboardCard(
+                                  label: 'Total Requests',
+                                  title: state.dashbordCount['requests'] ?? '0',
+                                  icon: Icons.description_outlined,
+                                ),
+                                DashboardCard(
+                                  label: 'Total Staffs',
+                                  title: state.dashbordCount['staffs'] ?? '0',
+                                  icon: Icons.group_work,
+                                ),
+                                DashboardCard(
+                                  label: 'Total Services',
+                                  title: state.dashbordCount['services'] ?? '0',
+                                  icon: Icons.home_repair_service,
+                                ),
+                                DashboardCard(
+                                  label: 'Total Tenants',
+                                  title: state.dashbordCount['tenants'] ?? '0',
+                                  icon: Icons.groups_2_outlined,
+                                ),
+                              ],
+                            )
+                          : state is DashboardCountLoadingState
+                              ? const Center(
+                                  child: CustomProgressIndicator(),
+                                )
+                              : const SizedBox();
+                    },
+                  ),
+                  const Divider(
+                    height: 40,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: Row(
+                          children: [
+                            OrderItem(
+                              isSeleted: status == 'pending',
+                              label: 'Pending',
+                              onTap: () {
+                                status = 'pending';
+                                getServiceRequest();
+                                setState(() {});
+                              },
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            OrderItem(
+                              isSeleted: status == 'accepted',
+                              label: 'Accepted',
+                              onTap: () {
+                                status = 'accepted';
+                                getServiceRequest();
+                                setState(() {});
+                              },
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            OrderItem(
+                              isSeleted: status == 'completed',
+                              label: 'Completed',
+                              onTap: () {
+                                status = 'completed';
+                                getServiceRequest();
+                                setState(() {});
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 50,
+                      ),
+                      Expanded(
+                        child: ServiceSelector(
+                          onSelect: (id) {
+                            serviceId = id == 0 ? null : id;
+                            getServiceRequest();
+                            setState(() {});
+                          },
+                          label: 'Services',
+                        ),
+                      ),
+                    ],
+                  ),
+                  const Divider(
+                    height: 40,
+                  ),
+                  Expanded(
+                    child: state is ServiceRequestSuccessState
+                        ? state.serviceRequests.isNotEmpty
+                            ? SingleChildScrollView(
+                                child: Wrap(
+                                  spacing: 20,
+                                  runSpacing: 20,
+                                  children: List<Widget>.generate(
+                                    state.serviceRequests.length,
+                                    (index) => ServiceRequestCard(
+                                      serviceRequestDetails:
+                                          state.serviceRequests[index],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : const Center(child: Text('No service found.'))
+                        : const Center(
+                            child: CustomProgressIndicator(),
+                          ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 }
 
 class ServiceRequestCard extends StatelessWidget {
+  final Map<String, dynamic> serviceRequestDetails;
   const ServiceRequestCard({
     super.key,
+    required this.serviceRequestDetails,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 310,
+      width: 320,
       child: CustomCard(
         child: Padding(
           padding: const EdgeInsets.symmetric(
@@ -118,16 +252,24 @@ class ServiceRequestCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '#11',
+                    '#${serviceRequestDetails['id'].toString()}',
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                           color: Colors.grey[600],
                           fontWeight: FontWeight.w400,
                         ),
                   ),
                   Text(
-                    'Pending',
+                    serviceRequestDetails['status'] == 'pending'
+                        ? 'Pending'
+                        : serviceRequestDetails['status'] == 'accepted'
+                            ? 'Accepted'
+                            : 'Completed',
                     style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: Colors.grey[600],
+                          color: serviceRequestDetails['status'] == 'pending'
+                              ? Colors.grey[600]
+                              : serviceRequestDetails['status'] == 'accepted'
+                                  ? Colors.green
+                                  : Colors.blue[900],
                           fontWeight: FontWeight.w400,
                         ),
                   ),
@@ -136,27 +278,29 @@ class ServiceRequestCard extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              const LabelWithText(
+              LabelWithText(
                 label: 'Service',
-                text: 'Cleaning',
+                text: serviceRequestDetails['service']['service'],
               ),
               const SizedBox(
                 height: 10,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
+                children: [
                   Expanded(
                     child: LabelWithText(
                       label: 'From',
-                      text: 'User name',
+                      text: serviceRequestDetails['requestedBy']['name'],
                     ),
                   ),
                   Expanded(
                     child: LabelWithText(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       label: 'Accepted By',
-                      text: 'Staff name',
+                      text: serviceRequestDetails['acceptedBy'] != null
+                          ? serviceRequestDetails['acceptedBy']['name']
+                          : 'not yet accepted',
                     ),
                   ),
                 ],
@@ -165,18 +309,19 @@ class ServiceRequestCard extends StatelessWidget {
                 height: 30,
               ),
               Row(
-                children: const [
+                children: [
                   Expanded(
                     child: LabelWithText(
                       label: 'Room',
-                      text: '101',
+                      text: serviceRequestDetails['room']['room_no'],
                     ),
                   ),
                   Expanded(
                     child: LabelWithText(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       label: 'Price',
-                      text: '₹500',
+                      text:
+                          '₹${serviceRequestDetails['service']['price'].toString()}',
                     ),
                   ),
                 ],
@@ -184,9 +329,13 @@ class ServiceRequestCard extends StatelessWidget {
               const Divider(
                 height: 30,
               ),
-              const LabelWithText(
+              LabelWithText(
                 label: 'Payment Status',
-                text: 'Pending',
+                text: serviceRequestDetails['payment_status'] == 'pending'
+                    ? 'Pending'
+                    : serviceRequestDetails['payment_status'] == 'active'
+                        ? 'Active'
+                        : 'Paid',
               ),
             ],
           ),

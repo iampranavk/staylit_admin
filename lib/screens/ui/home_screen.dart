@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:staylit_admin/screens/ui/home_screen_sections/complaints_screen.dart';
 import 'package:staylit_admin/screens/ui/home_screen_sections/dashboard_and_service_requests.dart';
 import 'package:staylit_admin/screens/ui/home_screen_sections/floors_screen.dart';
-import 'package:staylit_admin/screens/ui/home_screen_sections/notification_screen.dart';
 import 'package:staylit_admin/screens/ui/home_screen_sections/rooms_screen.dart';
 import 'package:staylit_admin/screens/ui/home_screen_sections/services_screen.dart';
 import 'package:staylit_admin/screens/ui/home_screen_sections/staffs_screen.dart';
