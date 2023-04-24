@@ -40,7 +40,7 @@ class TenantBloc extends Bloc<TenantEvent, TenantState> {
             Map<String, dynamic>? room = await roomTable
                 .select()
                 .eq('occuppied_by', profiles[i]['user_id'])
-                .single();
+                .maybeSingle();
             if (room != null) {
               profiles[i]['room'] = room;
             } else {

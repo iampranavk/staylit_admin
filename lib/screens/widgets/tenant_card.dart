@@ -66,7 +66,9 @@ class TenantCard extends StatelessWidget {
                   Expanded(
                     child: LabelWithText(
                       label: 'Room',
-                      text: tenantDetails['room']['room_no'],
+                      text: tenantDetails['room'] != null
+                          ? tenantDetails['room']['room_no']
+                          : 'Not assigned',
                     ),
                   ),
                   // Expanded(
