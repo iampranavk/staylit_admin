@@ -45,6 +45,7 @@ class _TenantsScreenState extends State<TenantsScreen> {
                 primaryButtonLabel: 'Ok',
                 primaryOnPressed: () {
                   getTenants();
+                  Navigator.pop(context);
                 },
               ),
             );

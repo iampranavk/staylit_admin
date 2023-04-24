@@ -50,33 +50,43 @@ class TenantBloc extends Bloc<TenantEvent, TenantState> {
 
           emit(TenantSuccessState(tenants: profiles));
         } else if (event is AddTenantEvent) {
-          UserResponse userDetails = await supabaseClient.auth.admin.createUser(
-            AdminUserAttributes(
-              email: event.email,
-              password: event.password,
-              emailConfirm: true,
-              userMetadata: {
-                'status': 'active',
-              },
-            ),
-          );
-          if (userDetails.user != null) {
-            await queryTable.insert({
-              'user_id': userDetails.user!.id,
-              'name': event.name,
-              'phone': event.phone,
-              'email': userDetails.user!.email,
-            });
+          List<dynamic>? roomDetails = await roomTable
+              .select()
+              .eq('id', event.roomId)
+              .is_('occuppied_by', null);
+          if (roomDetails != null && roomDetails.isNotEmpty) {
+            UserResponse userDetails =
+                await supabaseClient.auth.admin.createUser(
+              AdminUserAttributes(
+                email: event.email,
+                password: event.password,
+                emailConfirm: true,
+                userMetadata: {
+                  'status': 'active',
+                },
+              ),
+            );
 
-            await roomTable.update(
-              {
+            if (userDetails.user != null) {
+              await queryTable.insert({
+                'user_id': userDetails.user!.id,
+                'name': event.name,
+                'phone': event.phone,
+                'email': userDetails.user!.email,
+              });
+
+              await roomTable.update({
                 'occuppied_by': userDetails.user!.id,
-              },
-            ).eq('id', event.roomId);
+              }).eq('id', event.roomId);
 
-            add(GetAllTenantEvent());
+              add(GetAllTenantEvent());
+            } else {
+              emit(TenantFailureState());
+            }
           } else {
-            emit(TenantFailureState());
+            emit(TenantFailureState(
+              message: 'Room already occupied!',
+            ));
           }
         } else if (event is EditTenantEvent) {
           AdminUserAttributes attributes =
@@ -99,10 +109,24 @@ class TenantBloc extends Bloc<TenantEvent, TenantState> {
             }).eq('user_id', event.userId);
 
             if (event.roomId != null) {
-              await roomTable.delete().eq('occuppied_by', userDetails.user!.id);
-              await roomTable.update({
-                'occuppied_by': userDetails.user!.id,
-              }).eq('id', event.roomId);
+              List<dynamic>? roomDetails = await roomTable
+                  .select()
+                  .eq('id', event.roomId)
+                  .is_('occuppied_by', null);
+              if (roomDetails != null && roomDetails.isNotEmpty) {
+                await roomTable
+                    .delete()
+                    .eq('occuppied_by', userDetails.user!.id);
+                await roomTable.update({
+                  'occuppied_by': userDetails.user!.id,
+                }).eq('id', event.roomId);
+
+                add(GetAllTenantEvent());
+              } else {
+                emit(TenantFailureState(
+                  message: 'Room already occupied!',
+                ));
+              }
             }
 
             add(GetAllTenantEvent());
