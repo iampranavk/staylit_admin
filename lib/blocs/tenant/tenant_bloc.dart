@@ -99,11 +99,10 @@ class TenantBloc extends Bloc<TenantEvent, TenantState> {
             }).eq('user_id', event.userId);
 
             if (event.roomId != null) {
-              await roomTable.update(
-                {
-                  'occuppied_by': userDetails.user!.id,
-                },
-              ).eq('id', event.roomId);
+              await roomTable.delete().eq('occuppied_by', userDetails.user!.id);
+              await roomTable.update({
+                'occuppied_by': userDetails.user!.id,
+              }).eq('id', event.roomId);
             }
 
             add(GetAllTenantEvent());

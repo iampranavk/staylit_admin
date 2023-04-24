@@ -34,22 +34,19 @@ class TenantCard extends StatelessWidget {
               const SizedBox(
                 height: 10,
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: LabelWithText(
-                      label: 'Name',
-                      text: tenantDetails['name'],
-                    ),
-                  ),
-                  Expanded(
-                    child: LabelWithText(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      label: 'Email',
-                      text: tenantDetails['email'],
-                    ),
-                  ),
-                ],
+              Expanded(
+                child: LabelWithText(
+                  label: 'Name',
+                  text: tenantDetails['name'],
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              LabelWithText(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                label: 'Email',
+                text: tenantDetails['email'],
               ),
               const SizedBox(
                 height: 10,
